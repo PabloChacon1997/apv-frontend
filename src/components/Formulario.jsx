@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useState } from "react"
 import usePacientes from "../hooks/usePacientes"
 import Alerta from './Alerta'
@@ -12,9 +13,24 @@ const Formulario = () => {
   const [sintomas, setSintomas] = useState('')
 
 
+  const [id, setId] = useState('')
+
+
   const [alerta, setAlerta] = useState({})
 
-  const { guardarPaciente } = usePacientes()
+  const { guardarPaciente, paciente } = usePacientes()
+
+  useEffect(() => {
+    if (paciente?.nombre) {
+      setNombre(paciente.nombre)
+      setPropietario(paciente.propietario)
+      setEmail(paciente.email)
+      setFecha(paciente.fecha)
+      setSintomas(paciente.sintomas)
+      setId(paciente._id)
+    }
+  }, [paciente])
+  
 
 
   const handleSubmit = (e) => {
@@ -30,7 +46,16 @@ const Formulario = () => {
     }
 
     setAlerta({})
-    guardarPaciente({nombre, propietario, email, fecha, sintomas})
+    guardarPaciente({nombre, propietario, email, fecha, sintomas, id})
+    setAlerta({
+      msg: 'Paciente guardado correctamente'
+    })
+    setNombre('')
+    setPropietario('')
+    setEmail('')
+    setFecha('')
+    setSintomas('')
+    setId('')
   }
 
   const { msg } = alerta
@@ -133,7 +158,7 @@ const Formulario = () => {
         </div>
         <input 
           type="submit" 
-          value="Añade paciente" 
+          value={ id ? 'Actualizar paciente':'Guardar paciente' } 
           className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-700 cursor-pointer transition-colors" 
         />
       </form>
